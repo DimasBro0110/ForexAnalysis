@@ -90,7 +90,3 @@ class DataHandler(object):
             return cursor, s
         except Exception as ex:
             print(ex)
-
-
-# dat = DataHandler("localhost", "Dimas", "Dimas", "Forex")
-# dat.GetReport()

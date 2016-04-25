@@ -54,10 +54,3 @@ class ClientHandler(threading.Thread):
             print("Cannot connect to server")
             self.data
             exit(1)
-
-
-cl = ClientHandler('EUR/USD')
-try:
-    cl.start()
-except Exception as ex:
-    print(ex)
