@@ -21,6 +21,7 @@ class ClientHandler(threading.Thread):
             self.ClientSocket = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
             self.ClientSocket.connect(address)
         except Exception as ex:
+            print(ex)
             exit(1)
 
     def SetRunFlag(self, flag):
@@ -48,7 +49,7 @@ class ClientHandler(threading.Thread):
                         data = self.ClientSocket.recv(10000)
                         if not data:
                             print('not data')
-                        print(data)
+                        #print(data)
                     else:
                         print('not expected length')
                     time.sleep(2)
@@ -62,5 +63,5 @@ class ClientHandler(threading.Thread):
             exit(1)
 
 
-cl = ClientHandler("EUR_USD")
-cl.run()
+# cl = ClientHandler("EUR_USD")
+# cl.run()

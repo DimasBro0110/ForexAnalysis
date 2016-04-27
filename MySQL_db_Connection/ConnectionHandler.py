@@ -35,7 +35,7 @@ class DataHandler(object):
 
     def GetReport(self):
         query = """
-          select st.STOCKID, st.TIME, st.BID, st.STATUS
+          select st.STOCKID, st.TIME, st.ASK, st.STATUS
             from Forex.STOCKS st
             where DATE(st.TIME) = curdate()
             order by st.STOCKID DESC
@@ -53,13 +53,13 @@ class DataHandler(object):
                         str(DAT) + " " + \
                         str(ASK_BID) + \
                         str(STATUS) + "\n"
-                    print(s)
+                    # print(s)
             else:
                 print('not data')
             return cursor, s
         except Exception as ex:
             print(ex)
 
-dat = DataHandler("localhost", "Dimas", "Dimas", "Forex")
-cur, s = dat.GetReport()
-print(s)
+# dat = DataHandler("localhost", "Dimas", "Dimas", "Forex")
+# cur, s = dat.GetReport()
+# print(s)
