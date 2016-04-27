@@ -39,11 +39,14 @@ class ClientHandler(threading.Thread):
             try:
                 while self.isRun:
                     cur, dat = self.data.GetReport()
-                    self.ClientSocket.send(self.name + " " + dat)
-                    data = self.ClientSocket.recv(10000)
-                    if not data:
-                        print('not data')
-                    print(data)
+                    if len(dat) >= 50:
+                        self.ClientSocket.send(self.name + " " + dat)
+                        data = self.ClientSocket.recv(10000)
+                        if not data:
+                            print('not data')
+                        print(data)
+                    else:
+                        print('not expected length')
                     time.sleep(2)
             except Exception as ex:
                 self.SetRunFlag(False)
@@ -52,5 +55,4 @@ class ClientHandler(threading.Thread):
                 exit(1)
         else:
             print("Cannot connect to server")
-            self.data
             exit(1)

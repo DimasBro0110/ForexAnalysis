@@ -4,43 +4,38 @@ import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 
-ls_time = ['2016-03-14 08:30:50',
-           '2016-03-14 08:30:55',
-           '2016-03-14 08:31:01',
-           '2016-03-14 08:31:06',
-           '2016-03-14 08:31:12',
-           '2016-03-14 08:31:18',
-           '2016-03-14 08:31:23',
-           '2016-03-14 08:31:29',
-           '2016-03-14 08:32:50',
-           '2016-03-14 08:32:55',
-           '2016-03-14 08:33:01',
-           '2016-03-14 08:33:06',
-           '2016-03-14 08:37:26',
-           ]
+# data to test
+# st = "43574 2016-04-27 13:45:28 1.131460" + "\n" + \
+#      "43573 2016-04-27 13:45:18 1.13160" + "\n" + \
+#      "43572 2016-04-27 13:45:07 1.13160" + "\n" + \
+#      "43571 2016-04-27 13:44:57 1.13160" + "\n"
 
-ls_vals = [1.11614,
-           1.11604,
-           1.11604,
-           1.11606,
-           1.11606,
-           1.11606,
-           1.1161,
-           1.11608,
-           1.11624,
-           1.11624,
-           1.11624,
-           1.11624,
-           1.11655
-           ]
+class DataParser():
 
-ls_time = pd.to_datetime(ls_time)
-ts = pd.Series(ls_vals, index=ls_time)
+    def __init__(self, s):
+        self.data = s
 
-dataset = ts[0:len(ts) - 2]
+    def DoParse(self):
+        lst = self.data.split("\n")
+        lst_time, lst_vals, lst_val_id = [], [], []
+        for s in lst:
+            ls = s.split(" ")
+            if len(ls) > 3:
+                lst_time.append(ls[1] + " " + ls[2])
+                lst_vals.append(ls[3])
+                lst_val_id.append(ls[0])
+        lst_time = pd.to_datetime(lst_time)
+        time_series = pd.TimeSeries(lst_vals, index=lst_time)
+        return time_series
 
-arima_model = sm.tsa.ARIMA(dataset, (4, 1, 2), freq='T').fit()
-forecast = arima_model.forecast(steps=2)
-forecasted_data = forecast[0]
 
-print(forecasted_data)
+class Forecasting():
+
+    def __init__(self, time_ser_data):
+        self.data = time_ser_data
+
+    def DoForecast(self):
+        arima_model = sm.tsa.ARIMA(self.data, (4, 1, 2), freq='T').fit()
+        forecast = arima_model.forecast(steps=2)
+        forecasted_data = forecast[0]
+        return forecasted_data

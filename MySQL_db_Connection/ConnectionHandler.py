@@ -34,59 +34,32 @@ class DataHandler(object):
         return connection
 
     def GetReport(self):
-        query = """  SELECT con1.STOCK_ID,
-                           con1.DAT,
-                           con1.ASK_MAX,
-                           con1.ASK_MIN,
-                           con1.ASK_AVG,
-                           con1.ASK_AVG - con2.ASK_AVG as 'DIF'
-                        FROM
-                    (SELECT st.STOCKID as 'STOCK_ID',
-                           DATE(st.TIME) as 'DAT',
-                           MAX(st.BID) as 'BID_MAX',
-                           MIN(st.BID) as 'BID_MIN',
-                           MAX(st.ASK) as 'ASK_MAX',
-                           MIN(st.ASK) as 'ASK_MIN',
-                           AVG(st.ASK) as 'ASK_AVG'
-                        FROM Forex.STOCKS st
-                        GROUP BY DATE(st.TIME)
-                    )as con1
-                    INNER JOIN
-                    (SELECT st.STOCKID as 'STOCK_ID',
-                           DATE(st.TIME) as 'DAT',
-                           MAX(st.BID) as 'BID_MAX',
-                           MIN(st.BID) as 'BID_MIN',
-                           MAX(st.ASK) as 'ASK_MAX',
-                           MIN(st.ASK) as 'ASK_MIN',
-                           AVG(st.ASK) as 'ASK_AVG'
-                        FROM Forex.STOCKS st
-                        GROUP BY DATE(st.TIME)
-                    ) as con2
-                    ON con1.STOCK_ID > con2.STOCK_ID
-                    GROUP BY con2.STOCK_ID;
-                """
+        query = """
+          select st.STOCKID, st.TIME, st.BID, st.STATUS
+            from Forex.STOCKS st
+            where DATE(st.TIME) = curdate()
+            order by st.STOCKID DESC
+            limit 50;
+        """
         try:
             conn = self.EstablishConnection()
             cursor = conn.cursor()
             cursor.execute(query)
-            lst = []
             s = ''
-            for (STOCK_ID, DAT, ASK_MAX, ASK_MIN, ASK_AVG, DIF) in cursor:
-                # print(STOCK_ID, DAT.strftime("%Y-%m-%d"), ASK_MAX, ASK_MIN, ASK_AVG, DIF)
-                lst.append([
-                    STOCK_ID,
-                    DAT.strftime("%Y-%m-%d"),
-                    ASK_MAX,
-                    ASK_MIN,
-                    ASK_AVG,
-                    DIF
-                ])
-                s += str(STOCK_ID) + " " + \
-                    DAT.strftime("%Y-%m-%d") + " " + \
-                    str(ASK_MAX) + " " + \
-                    str(ASK_MIN) + " " + \
-                    str(ASK_AVG) + " " + \
-                    str(DIF) + "\n"
+            d = cursor.fetchall()
+            if len(d) >= 50:
+                for (STOCK_ID, DAT, ASK_BID, STATUS) in d:
+                    s += str(STOCK_ID) + " " + \
+                        str(DAT) + " " + \
+                        str(ASK_BID) + \
+                        str(STATUS) + "\n"
+                    print(s)
+            else:
+                print('not data')
             return cursor, s
         except Exception as ex:
             print(ex)
+
+dat = DataHandler("localhost", "Dimas", "Dimas", "Forex")
+cur, s = dat.GetReport()
+print(s)
