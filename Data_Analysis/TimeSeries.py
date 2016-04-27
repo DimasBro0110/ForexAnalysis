@@ -22,11 +22,11 @@ class DataParser():
             ls = s.split(" ")
             if len(ls) > 3:
                 lst_time.append(ls[1] + " " + ls[2])
-                lst_vals.append(ls[3])
+                lst_vals.append(float(ls[3]))
                 lst_val_id.append(ls[0])
         lst_time = pd.to_datetime(lst_time)
         time_series = pd.TimeSeries(lst_vals, index=lst_time)
-        return time_series
+        return time_series, lst_vals, lst_val_id
 
 
 class Forecasting():
@@ -35,7 +35,7 @@ class Forecasting():
         self.data = time_ser_data
 
     def DoForecast(self):
-        arima_model = sm.tsa.ARIMA(self.data, (4, 1, 2), freq='T').fit()
+        arima_model = sm.tsa.ARIMA(self.data, (4, 2, 1), freq='T').fit()
         forecast = arima_model.forecast(steps=2)
         forecasted_data = forecast[0]
         return forecasted_data
