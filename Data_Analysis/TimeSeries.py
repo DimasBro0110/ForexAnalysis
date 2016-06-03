@@ -35,7 +35,14 @@ class Forecasting():
         self.data = time_ser_data
 
     def DoForecast(self):
-        arima_model = sm.tsa.ARIMA(self.data, (3, 2, 1), freq='T').fit()
-        forecast = arima_model.forecast(steps=2)
-        forecasted_data = forecast[0]
-        return forecasted_data
+        try:
+            arima_model = sm.tsa.ARIMA(self.data, (3, 1, 1)).fit()
+            forecast = arima_model.forecast(steps=1)
+            forecasted_data = forecast[0]
+            return forecasted_data
+        except Exception as ex:
+            print(ex)
+            arma_model = sm.tsa.ARMA(self.data, (2, 1)).fit()
+            forecast = arma_model.predict()
+            forecasted_data_arma = forecast[0]
+            return forecasted_data_arma

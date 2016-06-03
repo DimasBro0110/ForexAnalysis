@@ -39,20 +39,21 @@ class ClientHandler(threading.Thread):
             try:
                 while self.isRun:
                     cur, dat = self.data.GetReport()
+                    from_serv = self.ClientSocket.recv(10000)
+                    print(str(from_serv))
                     if len(dat) >= 50:
                         data = DataParser(dat)
                         dat, lst_vals, lst_vals_id = data.DoParse()
+                        self.data.MakeUpdate(lst_vals.pop(), self.data.IdMaxGetter())
                         forecast = Forecasting(dat)
                         forested_data = forecast.DoForecast()
-                        self.ClientSocket.send(
-                            self.name + " " + str(forested_data[0]) + " " + str(forested_data[1]) + "\n")
-                        data = self.ClientSocket.recv(10000)
-                        if not data:
-                            print('not data')
-                        #print(data)
+                        if forested_data.size != 0:
+                            self.data.MakeInsert(forested_data[0], 0, "EUR/USD")
+                            self.ClientSocket.send(
+                                self.name + " " + str(forested_data) + "\n")
                     else:
-                        print('not expected length')
-                    time.sleep(2)
+                        self.ClientSocket.send("BAD\n")
+                    time.sleep(10)
             except Exception as ex:
                 self.SetRunFlag(False)
                 self.ClientSocket.close()
