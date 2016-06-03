@@ -68,10 +68,27 @@ class DataHandler(object):
         )
         self.connection.commit()
 
+
+    def GetReportForResearch(self):
+
+        cursor = self.connection.cursor()
+        query = """select tr.real_ask,
+	                  tr.predicted_ask, tr.tim
+                      from Forex.TRADE_REPORT tr
+                      where tr.isDone = 1; """
+        cursor.execute(query)
+        s = ''
+        d = cursor.fetchall()
+        for (REAL_ASK, PREDICTED_ASK, TIM) in d:
+            s += str(REAL_ASK) + " " + \
+                 str(PREDICTED_ASK) + " " + \
+                 str(TIM) + "\n"
+        return s
+
     def GetReport(self):
         # query = """
-        #   select st.STOCKID, st.TIME, st.ASK, st.STATUS
-        #     from Forex.STOCKS st
+        # select st.STOCKID, st.TIME, st.ASK, st.STATUS
+        # from Forex.STOCKS st
         #     where DAY(st.TIME) = DAY(curdate())
         #     order by st.STOCKID DESC
         #     limit 30;
