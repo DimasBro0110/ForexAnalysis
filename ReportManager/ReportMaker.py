@@ -36,7 +36,7 @@ real_data_minus = real_data - 1.96*deviation
 plt.plot_date(x=time_ser, y=real_data, fmt="b-", label="Real Data", linewidth=2.0)
 plt.plot_date(x=time_ser, y=real_data_plus, fmt="r--", label="Trustee Interval")
 plt.plot_date(x=time_ser, y=real_data_minus, fmt="r--")
-plt.plot_date(x=time_ser, y=predicted_data, fmt="kDус:", label="Predicted Data", linewidth=2.0)
+plt.plot_date(x=time_ser, y=predicted_data, fmt="kD:", label="Predicted Data", linewidth=2.0)
 plt.legend(loc='best')
 plt.show()
 
